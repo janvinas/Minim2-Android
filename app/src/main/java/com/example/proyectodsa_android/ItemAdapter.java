@@ -8,10 +8,12 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.proyectodsa_android.models.InventoryObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder> {
+public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.InventoryViewHolder> {
     private List<InventoryObject> items = new ArrayList<>();
 
     public void setItems(List<InventoryObject> items) {
@@ -21,16 +23,16 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
 
     @NonNull
     @Override
-    public ItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_inventory, parent, false);
-        return new ItemViewHolder(view);
+    public InventoryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.item_inventory, parent, false);
+        return new InventoryViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull InventoryViewHolder holder, int position) {
         InventoryObject item = items.get(position);
-        holder.tvName.setText(item.getName());
-        holder.tvQuantity.setText(String.valueOf(item.getQuantity()));
+        holder.bind(item);
     }
 
     @Override
@@ -38,14 +40,19 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
         return items.size();
     }
 
-    static class ItemViewHolder extends RecyclerView.ViewHolder {
+    static class InventoryViewHolder extends RecyclerView.ViewHolder {
         TextView tvName;
         TextView tvQuantity;
 
-        ItemViewHolder(@NonNull View itemView) {
+        InventoryViewHolder(@NonNull View itemView) {
             super(itemView);
             tvName = itemView.findViewById(R.id.tvName);
             tvQuantity = itemView.findViewById(R.id.tvQuantity);
+        }
+
+        void bind(InventoryObject item) {
+            tvName.setText(item.getName());
+            tvQuantity.setText(String.valueOf(item.getQuantity()));
         }
     }
 }

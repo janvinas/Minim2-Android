@@ -18,10 +18,10 @@
         android:usesCleartextTraffic="true">
 
         <activity
-            android:name=".Activity.HomeActivity"
+            android:name=".activity.HomeActivity"
             android:exported="false" />
         <activity
-            android:name=".Activity.AuthActivity"
+            android:name=".activity.AuthActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

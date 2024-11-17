@@ -1,5 +1,10 @@
 package com.example.proyectodsa_android;
 
+import com.example.proyectodsa_android.models.InventoryObject;
+import com.example.proyectodsa_android.models.LoginRequest;
+import com.example.proyectodsa_android.models.StoreObject;
+import com.example.proyectodsa_android.models.User;
+
 import java.util.List;
 
 import retrofit2.Call;

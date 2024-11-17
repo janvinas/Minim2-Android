@@ -1,4 +1,4 @@
-package com.example.proyectodsa_android;
+package com.example.proyectodsa_android.models;
 
 public class StoreObject {
     private String name;

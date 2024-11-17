@@ -1,4 +1,4 @@
-package com.example.proyectodsa_android;
+package com.example.proyectodsa_android.models;
 
 public class InventoryObject {
     private String name;

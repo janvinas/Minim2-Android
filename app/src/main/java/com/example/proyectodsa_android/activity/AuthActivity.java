@@ -1,4 +1,4 @@
-package com.example.proyectodsa_android.Activity;
+package com.example.proyectodsa_android.activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -10,17 +10,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.example.proyectodsa_android.ApiService;
-import com.example.proyectodsa_android.LoginRequest;
+import com.example.proyectodsa_android.models.LoginRequest;
 import com.example.proyectodsa_android.R;
 import com.example.proyectodsa_android.RetrofitClient;
-import com.example.proyectodsa_android.User;
+import com.example.proyectodsa_android.models.User;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -78,10 +74,7 @@ public class AuthActivity extends AppCompatActivity {
             return;
         }
 
-        User user = new User();
-        user.setUsername(username);
-        user.setPassword(password);
-        user.setMail(email);
+        User user = new User(username, password, email); // 使用带参数的构造函数
 
         apiService.register(user).enqueue(new Callback<User>() {
             @Override
@@ -92,17 +85,20 @@ public class AuthActivity extends AppCompatActivity {
                     etLoginIdentifier.setText(username);
                     etLoginPassword.setText(password);
                 } else {
-                    Toast.makeText(AuthActivity.this, "Registration failed", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AuthActivity.this,
+                            "Registration failed: " + response.code(),
+                            Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<User> call, Throwable t) {
-                Toast.makeText(AuthActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(AuthActivity.this,
+                        "Error: " + t.getMessage(),
+                        Toast.LENGTH_SHORT).show();
             }
         });
     }
-
     private void handleLogin() {
         String identifier = etLoginIdentifier.getText().toString();
         String password = etLoginPassword.getText().toString();
