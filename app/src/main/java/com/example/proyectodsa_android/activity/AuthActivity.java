@@ -24,7 +24,7 @@ import retrofit2.Response;
 
 public class AuthActivity extends AppCompatActivity {
     private ViewFlipper viewFlipper;
-    private EditText etUsername, etEmail, etPassword;
+    private EditText etUsername, etEmail, etPassword, etConfirmPassword;
     private EditText etLoginIdentifier, etLoginPassword;
     private Button btnRegister, btnLogin;
     private TextView tvSwitchToLogin, tvSwitchToRegister;
@@ -49,12 +49,16 @@ public class AuthActivity extends AppCompatActivity {
         etPassword = findViewById(R.id.etPassword);
         btnRegister = findViewById(R.id.btnRegister);
         tvSwitchToLogin = findViewById(R.id.tvSwitchToLogin);
+        etConfirmPassword = findViewById(R.id.etConfirmPassword);
+
 
         // Login views
         etLoginIdentifier = findViewById(R.id.etLoginIdentifier);
         etLoginPassword = findViewById(R.id.etLoginPassword);
         btnLogin = findViewById(R.id.btnLogin);
         tvSwitchToRegister = findViewById(R.id.tvSwitchToRegister);
+
+
     }
 
     private void setupClickListeners() {
@@ -68,9 +72,15 @@ public class AuthActivity extends AppCompatActivity {
         String username = etUsername.getText().toString();
         String email = etEmail.getText().toString();
         String password = etPassword.getText().toString();
+        String confirmPassword = etConfirmPassword.getText().toString();
 
         if (username.isEmpty() || email.isEmpty() || password.isEmpty()) {
             Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (!password.equals(confirmPassword)) {
+            Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show();
             return;
         }
 

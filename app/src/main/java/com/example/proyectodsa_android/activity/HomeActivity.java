@@ -8,6 +8,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -48,6 +49,8 @@ public class HomeActivity extends AppCompatActivity {
         initializeViews();
         setupRecyclerViews();
         loadData();
+// 监听器
+        storeAdapter.setOnItemClickListener(item -> showPurchaseDialog(item));
     }
 
     private void initializeViews() {
@@ -144,4 +147,36 @@ public class HomeActivity extends AppCompatActivity {
         startActivity(new Intent(this, AuthActivity.class));
         finish();
     }
+
+    // 添加对话框
+    private void showPurchaseDialog(StoreObject item) {
+        new AlertDialog.Builder(this)
+                .setTitle("Purchase Confirmation")
+                .setMessage("Are you sure you want to buy " + item.getName() + "? Price: " + item.getPrice() + " €")
+                .setPositiveButton("Confirm", (dialog, which) -> purchaseItem(item))
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+    //购买
+    private void purchaseItem(StoreObject item) {
+        apiService.buyObject(item.getName(), username, 1, token).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(HomeActivity.this, "Purchase successful!", Toast.LENGTH_SHORT).show();
+                    loadData(); // 重新加载数据更新余额和物品清单
+                } else {
+                    Toast.makeText(HomeActivity.this, "Purchase failed: " + response.code(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Toast.makeText(HomeActivity.this, "Purchase error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
 }
