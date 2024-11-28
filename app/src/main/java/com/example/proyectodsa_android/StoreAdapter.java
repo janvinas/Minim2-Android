@@ -30,22 +30,7 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.StoreViewHol
         return new StoreViewHolder(view);
     }
 
-    public interface OnItemClickListener {
-        void onItemClick(StoreObject item);
-    }
-    public void setOnItemClickListener(OnItemClickListener listener) {
-        this.onItemClickListener = listener;
-    }
-    @Override
-    public void onBindViewHolder(@NonNull StoreViewHolder holder, int position) {
-        StoreObject item = items.get(position);
-        holder.bind(item);
-        holder.itemView.setOnClickListener(v -> {
-            if (onItemClickListener != null) {
-                onItemClickListener.onItemClick(item);
-            }
-        });
-    }
+
     @Override
     public int getItemCount() {
         return items.size();
@@ -65,5 +50,25 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.StoreViewHol
             tvName.setText(item.getName());
             tvPrice.setText(String.format("%.2f €", item.getPrice()));
         }
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(StoreObject item);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.onItemClickListener = listener;
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull StoreViewHolder holder, int position) {
+        StoreObject item = items.get(position);
+        holder.bind(item);
+
+        holder.itemView.setOnClickListener(v -> {
+            if (onItemClickListener != null) {
+                onItemClickListener.onItemClick(item);
+            }
+        });
     }
 }

@@ -50,7 +50,6 @@ public class HomeActivity extends AppCompatActivity {
         initializeViews();
         setupRecyclerViews();
         loadData();
-
         storeAdapter.setOnItemClickListener(item -> showPurchaseDialog(item));
     }
 
@@ -86,45 +85,37 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void loadData() {
-        // 加载商店物品
+        // Load store items
         apiService.getStoreItems().enqueue(new Callback<List<StoreObject>>() {
             @Override
             public void onResponse(Call<List<StoreObject>> call, Response<List<StoreObject>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    Log.d("HomeActivity", "Store items: " + response.body().size());
                     storeAdapter.setItems(response.body());
                 }
             }
 
             @Override
             public void onFailure(Call<List<StoreObject>> call, Throwable t) {
-                Log.e("HomeActivity", "Error loading store items: " + t.getMessage());
                 Toast.makeText(HomeActivity.this, "Error loading store items", Toast.LENGTH_SHORT).show();
             }
         });
 
-        // 加载用户物品和金钱
-        loadUserData();
-    }
-    private void loadUserData() {
-        // 加载用户物品
+        // Load user items
         apiService.getUserObjects(username, token).enqueue(new Callback<List<InventoryObject>>() {
             @Override
             public void onResponse(Call<List<InventoryObject>> call, Response<List<InventoryObject>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    Log.d("HomeActivity", "User items: " + response.body().size());
                     inventoryAdapter.setItems(response.body());
                 }
             }
 
             @Override
             public void onFailure(Call<List<InventoryObject>> call, Throwable t) {
-                Log.e("HomeActivity", "Error loading inventory: " + t.getMessage());
                 Toast.makeText(HomeActivity.this, "Error loading inventory", Toast.LENGTH_SHORT).show();
             }
         });
 
-        // 加载用户金钱
+        // Load user money
         apiService.getUserMoney(username, token).enqueue(new Callback<Double>() {
             @Override
             public void onResponse(Call<Double> call, Response<Double> response) {
@@ -182,6 +173,7 @@ public class HomeActivity extends AppCompatActivity {
                 .setNegativeButton("Cancel", null)
                 .show();
     }
+
     //购买
     private void purchaseItem(StoreObject item) {
         apiService.buyObject(item.getName(), username, 1, token).enqueue(new Callback<Void>() {
@@ -194,11 +186,13 @@ public class HomeActivity extends AppCompatActivity {
                     Toast.makeText(HomeActivity.this, "Purchase failed: " + response.code(), Toast.LENGTH_SHORT).show();
                 }
             }
+
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
                 Toast.makeText(HomeActivity.this, "Purchase error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
+
 
 }

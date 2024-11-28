@@ -51,6 +51,8 @@ public class AuthActivity extends AppCompatActivity {
         btnRegister = findViewById(R.id.btnRegister);
         tvSwitchToLogin = findViewById(R.id.tvSwitchToLogin);
         etConfirmPassword = findViewById(R.id.etConfirmPassword);
+
+
         // Login views
         etLoginIdentifier = findViewById(R.id.etLoginIdentifier);
         etLoginPassword = findViewById(R.id.etLoginPassword);
@@ -124,6 +126,7 @@ public class AuthActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
                 if (response.isSuccessful() && response.body() != null) {
+                    User user = response.body();
                     String token = response.headers().get("Set-Cookie");
                     handleLoginSuccess(response.body(), token);
                 } else {
