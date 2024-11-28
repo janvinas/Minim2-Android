@@ -3,6 +3,7 @@ package com.example.proyectodsa_android.activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.Patterns;
 import android.widget.Button;
 import android.widget.EditText;
@@ -24,7 +25,7 @@ import retrofit2.Response;
 
 public class AuthActivity extends AppCompatActivity {
     private ViewFlipper viewFlipper;
-    private EditText etUsername, etEmail, etPassword;
+    private EditText etUsername, etEmail, etPassword, etConfirmPassword;
     private EditText etLoginIdentifier, etLoginPassword;
     private Button btnRegister, btnLogin;
     private TextView tvSwitchToLogin, tvSwitchToRegister;
@@ -49,7 +50,7 @@ public class AuthActivity extends AppCompatActivity {
         etPassword = findViewById(R.id.etPassword);
         btnRegister = findViewById(R.id.btnRegister);
         tvSwitchToLogin = findViewById(R.id.tvSwitchToLogin);
-
+        etConfirmPassword = findViewById(R.id.etConfirmPassword);
         // Login views
         etLoginIdentifier = findViewById(R.id.etLoginIdentifier);
         etLoginPassword = findViewById(R.id.etLoginPassword);
@@ -68,12 +69,16 @@ public class AuthActivity extends AppCompatActivity {
         String username = etUsername.getText().toString();
         String email = etEmail.getText().toString();
         String password = etPassword.getText().toString();
-
+        String confirmPassword = etConfirmPassword.getText().toString();
         if (username.isEmpty() || email.isEmpty() || password.isEmpty()) {
             Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show();
             return;
         }
 
+        if (!password.equals(confirmPassword)) {
+            Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show();
+            return;
+        }
         User user = new User(username, password, email); // 使用带参数的构造函数
 
         apiService.register(user).enqueue(new Callback<User>() {
@@ -119,10 +124,8 @@ public class AuthActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    User user = response.body();
                     String token = response.headers().get("Set-Cookie");
-                    saveLoginState(user.getUsername(), token);
-                    startHomeActivity(user.getUsername(), token);
+                    handleLoginSuccess(response.body(), token);
                 } else {
                     Toast.makeText(AuthActivity.this, "Login failed", Toast.LENGTH_SHORT).show();
                 }
@@ -135,19 +138,26 @@ public class AuthActivity extends AppCompatActivity {
         });
     }
 
-    private void saveLoginState(String username, String token) {
-        SharedPreferences prefs = getSharedPreferences("auth", MODE_PRIVATE);
-        prefs.edit()
-                .putString("username", username)
-                .putString("token", token)
-                .apply();
-    }
+    private void handleLoginSuccess(User user, String rawToken) {
+        // 打印原始token以便调试
+        Log.d("AuthActivity", "Raw token: " + rawToken);
 
-    private void startHomeActivity(String username, String token) {
-        Intent intent = new Intent(AuthActivity.this, HomeActivity.class);
-        intent.putExtra("username", username);
-        intent.putExtra("token", token);
-        startActivity(intent);
-        finish();
+        if (rawToken != null) {
+            // 不需要修改token格式，直接使用服务器返回的完整Cookie字符串
+            SharedPreferences prefs = getSharedPreferences("auth", MODE_PRIVATE);
+            prefs.edit()
+                    .putString("username", user.getUsername())
+                    .putString("token", rawToken)  // 保存完整的Cookie字符串
+                    .apply();
+
+            // 启动主页
+            Intent intent = new Intent(this, HomeActivity.class);
+            intent.putExtra("username", user.getUsername());
+            intent.putExtra("token", rawToken);
+            startActivity(intent);
+            finish();
+        } else {
+            Toast.makeText(this, "Login failed: No token received", Toast.LENGTH_SHORT).show();
+        }
     }
 }

@@ -3,11 +3,13 @@ package com.example.proyectodsa_android.activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -48,6 +50,8 @@ public class HomeActivity extends AppCompatActivity {
         initializeViews();
         setupRecyclerViews();
         loadData();
+
+        storeAdapter.setOnItemClickListener(item -> showPurchaseDialog(item));
     }
 
     private void initializeViews() {
@@ -82,37 +86,45 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void loadData() {
-        // Load store items
+        // 加载商店物品
         apiService.getStoreItems().enqueue(new Callback<List<StoreObject>>() {
             @Override
             public void onResponse(Call<List<StoreObject>> call, Response<List<StoreObject>> response) {
                 if (response.isSuccessful() && response.body() != null) {
+                    Log.d("HomeActivity", "Store items: " + response.body().size());
                     storeAdapter.setItems(response.body());
                 }
             }
 
             @Override
             public void onFailure(Call<List<StoreObject>> call, Throwable t) {
+                Log.e("HomeActivity", "Error loading store items: " + t.getMessage());
                 Toast.makeText(HomeActivity.this, "Error loading store items", Toast.LENGTH_SHORT).show();
             }
         });
 
-        // Load user items
+        // 加载用户物品和金钱
+        loadUserData();
+    }
+    private void loadUserData() {
+        // 加载用户物品
         apiService.getUserObjects(username, token).enqueue(new Callback<List<InventoryObject>>() {
             @Override
             public void onResponse(Call<List<InventoryObject>> call, Response<List<InventoryObject>> response) {
                 if (response.isSuccessful() && response.body() != null) {
+                    Log.d("HomeActivity", "User items: " + response.body().size());
                     inventoryAdapter.setItems(response.body());
                 }
             }
 
             @Override
             public void onFailure(Call<List<InventoryObject>> call, Throwable t) {
+                Log.e("HomeActivity", "Error loading inventory: " + t.getMessage());
                 Toast.makeText(HomeActivity.this, "Error loading inventory", Toast.LENGTH_SHORT).show();
             }
         });
 
-        // Load user money
+        // 加载用户金钱
         apiService.getUserMoney(username, token).enqueue(new Callback<Double>() {
             @Override
             public void onResponse(Call<Double> call, Response<Double> response) {
@@ -123,6 +135,7 @@ public class HomeActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<Double> call, Throwable t) {
+                Log.e("HomeActivity", "Error loading money: " + t.getMessage());
                 Toast.makeText(HomeActivity.this, "Error loading money", Toast.LENGTH_SHORT).show();
             }
         });
@@ -139,9 +152,53 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void handleLogout() {
+        // Borrar estado de inicio de sesión
         SharedPreferences prefs = getSharedPreferences("auth", MODE_PRIVATE);
         prefs.edit().clear().apply();
-        startActivity(new Intent(this, AuthActivity.class));
+
+        // Volver a la página de inicio de sesión
+        Intent intent = new Intent(this, AuthActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
         finish();
     }
+
+    private void handleTokenExpired() {
+        Toast.makeText(this, "Session expired. Please login again.", Toast.LENGTH_LONG).show();
+        SharedPreferences prefs = getSharedPreferences("auth", MODE_PRIVATE);
+        prefs.edit().clear().apply();
+        Intent intent = new Intent(this, AuthActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
+    }
+
+    // 添加对话框
+    private void showPurchaseDialog(StoreObject item) {
+        new AlertDialog.Builder(this)
+                .setTitle("Purchase Confirmation")
+                .setMessage("Are you sure you want to buy " + item.getName() + "? Price: " + item.getPrice() + " €")
+                .setPositiveButton("Confirm", (dialog, which) -> purchaseItem(item))
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+    //购买
+    private void purchaseItem(StoreObject item) {
+        apiService.buyObject(item.getName(), username, 1, token).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(HomeActivity.this, "Purchase successful!", Toast.LENGTH_SHORT).show();
+                    loadData(); // 重新加载数据更新余额和物品清单
+                } else {
+                    Toast.makeText(HomeActivity.this, "Purchase failed: " + response.code(), Toast.LENGTH_SHORT).show();
+                }
+            }
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Toast.makeText(HomeActivity.this, "Purchase error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
 }
