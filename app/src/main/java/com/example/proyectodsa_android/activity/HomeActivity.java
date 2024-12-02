@@ -29,170 +29,63 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class HomeActivity extends AppCompatActivity {
-    private TextView tvUsername;
-    private TextView tvMoney;
+    private Button btnUserStuff;
+    private Button btnStore;
     private Button btnLogout;
-    private Button btnSwitch;
-    private ViewFlipper viewFlipper;
-    private RecyclerView rvStore;
-    private RecyclerView rvInventory;
-    private StoreAdapter storeAdapter;
-    private ItemAdapter inventoryAdapter;
-    private ApiService apiService;
-    private String token;
-    private String username;
+    private TextView tvUsername;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        initializeViews();
-        setupRecyclerViews();
-        loadData();
-        storeAdapter.setOnItemClickListener(item -> showPurchaseDialog(item));
-    }
-
-    private void initializeViews() {
         tvUsername = findViewById(R.id.tvUsername);
-        tvMoney = findViewById(R.id.tvMoney);
+        btnUserStuff = findViewById(R.id.btnUserStuff);
+        btnStore = findViewById(R.id.btnstore);
         btnLogout = findViewById(R.id.btnLogout);
-        btnSwitch = findViewById(R.id.btnSwitch);
-        viewFlipper = findViewById(R.id.viewFlipper);
-        rvStore = findViewById(R.id.rvStore);
-        rvInventory = findViewById(R.id.rvInventory);
 
-        username = getIntent().getStringExtra("username");
-        token = getIntent().getStringExtra("token");
+        String username = getIntent().getStringExtra("username");
         tvUsername.setText(username);
+        String token = getIntent().getStringExtra("token");
 
-        apiService = RetrofitClient.getInstance().getApi();
+        // 验证 token
+        if (token == null || token.isEmpty()) {
+            Toast.makeText(this, "Token is missing or invalid!", Toast.LENGTH_SHORT).show();
+            Log.e("HomeActivity", "Token is null or empty. Redirecting to login.");
 
-        btnLogout.setOnClickListener(v -> handleLogout());
-        btnSwitch.setOnClickListener(v -> handleSwitch());
-    }
-
-    private void setupRecyclerViews() {
-        // Setup Store RecyclerView
-        storeAdapter = new StoreAdapter();
-        rvStore.setAdapter(storeAdapter);
-        rvStore.setLayoutManager(new LinearLayoutManager(this));
-
-        // Setup Inventory RecyclerView
-        inventoryAdapter = new ItemAdapter();
-        rvInventory.setAdapter(inventoryAdapter);
-        rvInventory.setLayoutManager(new LinearLayoutManager(this));
-    }
-
-    private void loadData() {
-        // Load store items
-        apiService.getStoreItems().enqueue(new Callback<List<StoreObject>>() {
-            @Override
-            public void onResponse(Call<List<StoreObject>> call, Response<List<StoreObject>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    storeAdapter.setItems(response.body());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<StoreObject>> call, Throwable t) {
-                Toast.makeText(HomeActivity.this, "Error loading store items", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        // Load user items
-        apiService.getUserObjects(username, token).enqueue(new Callback<List<InventoryObject>>() {
-            @Override
-            public void onResponse(Call<List<InventoryObject>> call, Response<List<InventoryObject>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    inventoryAdapter.setItems(response.body());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<InventoryObject>> call, Throwable t) {
-                Toast.makeText(HomeActivity.this, "Error loading inventory", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        // Load user money
-        apiService.getUserMoney(username, token).enqueue(new Callback<Double>() {
-            @Override
-            public void onResponse(Call<Double> call, Response<Double> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    tvMoney.setText(String.format("%.2f €", response.body()));
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Double> call, Throwable t) {
-                Log.e("HomeActivity", "Error loading money: " + t.getMessage());
-                Toast.makeText(HomeActivity.this, "Error loading money", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    private void handleSwitch() {
-        if (viewFlipper.getDisplayedChild() == 0) {
-            viewFlipper.setDisplayedChild(1);
-            btnSwitch.setText("View Store");
-        } else {
-            viewFlipper.setDisplayedChild(0);
-            btnSwitch.setText("View Inventory");
+            // 如果 token 无效，则返回登录界面
+            Intent intent = new Intent(this, AuthActivity.class);
+            startActivity(intent);
+            finish();
+            return;
         }
-    }
 
-    private void handleLogout() {
-        // Borrar estado de inicio de sesión
-        SharedPreferences prefs = getSharedPreferences("auth", MODE_PRIVATE);
-        prefs.edit().clear().apply();
+        Log.d("HomeActivity", "Token received: " + token);
 
-        // Volver a la página de inicio de sesión
-        Intent intent = new Intent(this, AuthActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
-        finish();
-    }
+        // 按钮点击事件
 
-    private void handleTokenExpired() {
-        Toast.makeText(this, "Session expired. Please login again.", Toast.LENGTH_LONG).show();
-        SharedPreferences prefs = getSharedPreferences("auth", MODE_PRIVATE);
-        prefs.edit().clear().apply();
-        Intent intent = new Intent(this, AuthActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
-        finish();
-    }
+        btnStore.setOnClickListener(v -> {
+            Intent intent = new Intent(this, StoreActivity.class);
+            intent.putExtra("username", username);
+            intent.putExtra("token", token);  // 确保 token 正确传递
+            startActivity(intent);
+        });
 
-    // 添加对话框
-    private void showPurchaseDialog(StoreObject item) {
-        new AlertDialog.Builder(this)
-                .setTitle("Purchase Confirmation")
-                .setMessage("Are you sure you want to buy " + item.getName() + "? Price: " + item.getPrice() + " €")
-                .setPositiveButton("Confirm", (dialog, which) -> purchaseItem(item))
-                .setNegativeButton("Cancel", null)
-                .show();
-    }
+        btnUserStuff.setOnClickListener(v -> {
+            Intent intent = new Intent(this, UserStuffActivity.class);
+            intent.putExtra("username", username);
+            intent.putExtra("token", token);  // 确保 token 正确传递
+            startActivity(intent);
+        });
 
-    //购买
-    private void purchaseItem(StoreObject item) {
-        apiService.buyObject(item.getName(), username, 1, token).enqueue(new Callback<Void>() {
-            @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
-                if (response.isSuccessful()) {
-                    Toast.makeText(HomeActivity.this, "Purchase successful!", Toast.LENGTH_SHORT).show();
-                    loadData(); // 重新加载数据更新余额和物品清单
-                } else {
-                    Toast.makeText(HomeActivity.this, "Purchase failed: " + response.code(), Toast.LENGTH_SHORT).show();
-                }
-            }
 
-            @Override
-            public void onFailure(Call<Void> call, Throwable t) {
-                Toast.makeText(HomeActivity.this, "Purchase error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-            }
+
+        btnLogout.setOnClickListener(v -> {
+            SharedPreferences prefs = getSharedPreferences("auth", MODE_PRIVATE);
+            prefs.edit().clear().apply();
+            Intent intent = new Intent(this, AuthActivity.class);
+            startActivity(intent);
+            finish();
         });
     }
-
-
 }

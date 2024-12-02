@@ -1,4 +1,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -21,12 +23,6 @@
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/tvMoney"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:textColor="@android:color/holo_green_dark" />
         </LinearLayout>
 
         <Button
@@ -35,35 +31,53 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:text="Logout" />
+
     </RelativeLayout>
 
-    <Button
-        android:id="@+id/btnSwitch"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
-        android:text="View Inventory" />
+        android:layout_height="match_parent"
+        tools:layout_editor_absoluteY="80dp">
 
-    <ViewFlipper
-        android:id="@+id/viewFlipper"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
+        <Button
+            android:id="@+id/btnUserStuff"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_marginStart="60dp"
+            android:layout_marginTop="100dp"
+            android:text="My Items"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <!-- Store Layout -->
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvStore"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="8dp" />
+        <Button
+            android:id="@+id/btnstore"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_marginEnd="60dp"
+            android:text="store"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/btnUserStuff" />
 
-        <!-- Inventory Layout -->
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvInventory"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="8dp" />
+        <Button
+            android:id="@+id/button7"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_marginTop="100dp"
+            android:text="ButtonToBeDone"
+            app:layout_constraintStart_toStartOf="@+id/btnUserStuff"
+            app:layout_constraintTop_toBottomOf="@+id/btnUserStuff" />
 
-    </ViewFlipper>
+        <Button
+            android:id="@+id/button8"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:text="ButtonToBeDone"
+            app:layout_constraintEnd_toEndOf="@+id/btnstore"
+            app:layout_constraintTop_toTopOf="@+id/button7" />
 
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>
+
+
+
+
