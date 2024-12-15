@@ -30,7 +30,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class HomeActivity extends AppCompatActivity {
-    private Button btnUserStuff;
+    private ImageButton btnUserStuff;
     private ImageButton btnStore;
     private Button btnLogout;
     private TextView tvUsername;

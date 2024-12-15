@@ -47,6 +47,10 @@ public class UserStuffActivity extends AppCompatActivity {
 
         String username = getIntent().getStringExtra("username");
         token = getIntent().getStringExtra("token");
+
+        // 打印 token 到 Logcat
+        Log.d("UserStuffActivity", "Received token: " + token);
+
         tvUsername.setText(username);
 
         inventoryAdapter = new ItemAdapter();
