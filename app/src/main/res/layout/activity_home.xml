@@ -39,6 +39,27 @@
         android:layout_height="match_parent"
         tools:layout_editor_absoluteY="80dp">
 
+        <!-- FrameLayout 包裹 ImageButton 以应用圆角背景 -->
+        <FrameLayout
+            android:id="@+id/btnstoreContainer"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_marginEnd="60dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/btnUserStuff"
+            android:background="@drawable/rounded_background"> <!-- 圆角背景 -->
+
+            <!-- ImageButton 放在 FrameLayout 中 -->
+            <ImageButton
+                android:id="@+id/btnstore"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/store_button"
+                android:scaleType="centerCrop"
+                android:src="@drawable/banania_store" />  <!-- 保证图片比例和填充 -->
+        </FrameLayout>
+
         <Button
             android:id="@+id/btnUserStuff"
             android:layout_width="120dp"
@@ -47,16 +68,9 @@
             android:layout_marginTop="100dp"
             android:text="My Items"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            android:background="@drawable/rounded_background"/>
 
-        <Button
-            android:id="@+id/btnstore"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
-            android:layout_marginEnd="60dp"
-            android:text="store"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/btnUserStuff" />
 
         <Button
             android:id="@+id/button7"
@@ -64,15 +78,17 @@
             android:layout_height="120dp"
             android:layout_marginTop="100dp"
             android:text="ButtonToBeDone"
-            app:layout_constraintStart_toStartOf="@+id/btnUserStuff"
+            app:layout_constraintStart_toStartOf="@+id/btnstoreContainer"
             app:layout_constraintTop_toBottomOf="@+id/btnUserStuff" />
 
         <Button
             android:id="@+id/button8"
             android:layout_width="120dp"
             android:layout_height="120dp"
+            android:layout_marginStart="60dp"
             android:text="ButtonToBeDone"
             app:layout_constraintEnd_toEndOf="@+id/btnstore"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/button7" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

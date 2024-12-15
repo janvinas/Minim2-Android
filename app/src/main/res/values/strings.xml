@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">ProyectoDSA-Android</string>
+    <string name="store_item_image">Store item image</string>
+    <string name="store_button">Store</string>
 </resources>

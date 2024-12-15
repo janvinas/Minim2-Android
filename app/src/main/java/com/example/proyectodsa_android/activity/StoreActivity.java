@@ -94,6 +94,11 @@ public class StoreActivity extends AppCompatActivity {
             public void onResponse(Call<List<StoreObject>> call, Response<List<StoreObject>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     storeAdapter.setItems(response.body());
+
+                    // 打印整个 JSON 消息
+                    String jsonResponse = response.body().toString(); // Assuming the response can be converted to a String directly
+                    Log.d("StoreActivity", "JSON Response: " + jsonResponse);
+
                 } else {
                     Toast.makeText(StoreActivity.this, "Error loading store items: " + response.code(), Toast.LENGTH_SHORT).show();
                 }
@@ -105,22 +110,21 @@ public class StoreActivity extends AppCompatActivity {
             }
         });
 
+
         // Load user money
-        String cookieString = "token=" + token;
-        apiService.getUserMoney(username, cookieString).enqueue(new Callback<Double>() {
+        apiService.getUserMoney(username, token).enqueue(new Callback<Double>() {
             @Override
             public void onResponse(Call<Double> call, Response<Double> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     tvMoney.setText(String.format("%.2f €", response.body()));
                 }
             }
-                @Override
-                public void onFailure(Call<Double> call, Throwable t) {
-                    Log.e("HomeActivity", "Error loading money: " + t.getMessage());
-                    Toast.makeText(StoreActivity.this, "Error loading money", Toast.LENGTH_SHORT).show();
-                }
 
 
+            @Override
+            public void onFailure(Call<Double> call, Throwable t) {
+                Toast.makeText(StoreActivity.this, "Error loading money", Toast.LENGTH_SHORT).show();
+            }
         });
     }
 

@@ -37,8 +37,9 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:text="Back" />
-    </RelativeLayout>
 
+
+    </RelativeLayout>
 
 
         <!-- Inventory Layout -->
