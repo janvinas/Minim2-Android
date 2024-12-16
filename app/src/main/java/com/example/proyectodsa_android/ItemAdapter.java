@@ -61,8 +61,8 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.InventoryViewH
             tvQuantity.setText(String.valueOf(item.getQuantity()));
 
             // 拼接完整的 URL
-            String baseUrl = "http://10.0.2.2:8080"; // 替换为你的服务器地址
-            String imageUrl = item.getImageUrl();
+            String baseUrl = "http://10.0.2.2:8080/"; // 替换为你的服务器地址
+            String imageUrl = item.getUrl();
             if (imageUrl != null && !imageUrl.isEmpty()) {
                 if (!imageUrl.startsWith("http")) {
                     imageUrl = baseUrl + imageUrl;

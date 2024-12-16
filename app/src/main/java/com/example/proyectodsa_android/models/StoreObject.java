@@ -1,19 +1,33 @@
 package com.example.proyectodsa_android.models;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 public class StoreObject {
+    @SerializedName("id")
+    @Expose
     private String id;
+
+    @SerializedName("name")
+    @Expose
     private String name;
+
+    @SerializedName("price")
+    @Expose
     private double price;
-    private String URL;
+
+    @SerializedName("url")
+    @Expose
+    private String url;
 
     // Default constructor required for Gson
     public StoreObject() {
     }
 
-    public StoreObject(String name, double price, String URL) {
+    public StoreObject(String name, double price, String url) {
         this.name = name;
         this.price = price;
-        this.URL = URL;
+        this.url = url;
     }
     public String getId() {
         return id;
@@ -39,11 +53,11 @@ public class StoreObject {
     }
 
     public String getImageUrl() {
-        return URL; // Getter for imageUrl
+        return url; // Getter for imageUrl
     }
 
     public void setImageUrl(String imageUrl) {
-        this.URL = imageUrl; // Setter for imageUrl
+        this.url = imageUrl; // Setter for imageUrl
     }
 
     @Override
@@ -51,7 +65,7 @@ public class StoreObject {
         return "StoreObject{" +
                 "name='" + name + '\'' +
                 ", price=" + price +
-                ", imageUrl='" + URL + '\'' + // Include imageUrl in toString
+                ", imageUrl='" + url + '\'' + // Include imageUrl in toString
                 '}';
     }
 }

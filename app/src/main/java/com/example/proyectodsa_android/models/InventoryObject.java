@@ -1,10 +1,36 @@
 package com.example.proyectodsa_android.models;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 public class InventoryObject {
+    @SerializedName("objectID")
+    @Expose
     private String objectID;    // 物品ID
+
+    @SerializedName("quantity")
+    @Expose
     private int quantity;       // 数量
-    private String name;        // 显示用的名字
-    private String URL;         // 图片URL
+
+    @SerializedName("userID")
+    @Expose
+    private String userID;
+
+    @SerializedName("name")
+    @Expose
+    private String name;
+
+    @SerializedName("description")
+    @Expose
+    private String description;
+
+    @SerializedName("price")
+    @Expose
+    private double price;
+
+    @SerializedName("url")
+    @Expose
+    private String url;
 
     // 构造函数
     public InventoryObject() {}
@@ -26,6 +52,14 @@ public class InventoryObject {
         this.quantity = quantity;
     }
 
+    public String getUserID() {
+        return userID;
+    }
+
+    public void setUserID(String userID) {
+        this.userID = userID;
+    }
+
     public String getName() {
         return name;
     }
@@ -34,19 +68,35 @@ public class InventoryObject {
         this.name = name;
     }
 
-    public String getImageUrl() {
-        return URL;
+    public String getDescription() {
+        return description;
     }
 
-    public void setImageUrl(String URL) {
-        this.URL = URL;
+    public void setDescription(String description) {
+        this.description = description;
     }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
     @Override
     public String toString() {
         return "InventoryObject{" +
-                "name='" + name + '\'' +
+                "userID='" + userID + '\'' +
                 ", quantity=" + quantity +
-                ", imageUrl='" + URL + '\'' + // Include imageUrl in toString
                 '}';
     }
 }

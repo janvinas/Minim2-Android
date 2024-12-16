@@ -15,13 +15,7 @@ import com.example.proyectodsa_android.models.StoreObject;
 import java.util.ArrayList;
 import java.util.List;
 
-
-import android.widget.ImageView;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.RequestOptions;
-import com.example.proyectodsa_android.models.StoreObject;
-
-import java.util.List;
 
 public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.StoreViewHolder> {
     private List<StoreObject> items = new ArrayList<>();
@@ -76,7 +70,7 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.StoreViewHol
             tvPrice.setText(String.format("%.2f €", item.getPrice()));
 
             // 拼接完整的 URL
-            String baseUrl = "http://10.0.2.2:8080"; // 替换为你的服务器地址
+            String baseUrl = "http://10.0.2.2:8080/"; // 替换为你的服务器地址
             String imageUrl = item.getImageUrl();
             if (imageUrl != null && !imageUrl.isEmpty()) {
                 if (!imageUrl.startsWith("http")) {
