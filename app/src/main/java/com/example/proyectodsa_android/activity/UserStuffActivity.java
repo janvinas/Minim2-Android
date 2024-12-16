@@ -34,6 +34,8 @@ public class UserStuffActivity extends AppCompatActivity {
     private ItemAdapter inventoryAdapter;
     private ApiService apiService;
     private String token;
+    private String userID;    // 添加 userID 字段
+    private String username;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,53 +47,70 @@ public class UserStuffActivity extends AppCompatActivity {
         rvInventory = findViewById(R.id.rvInventory);
         Button btnBack = findViewById(R.id.btnBack);
 
-        String username = getIntent().getStringExtra("username");
+        username = getIntent().getStringExtra("username");
+        userID = getIntent().getStringExtra("userID");
         token = getIntent().getStringExtra("token");
 
-        // 打印 token 到 Logcat
+        Log.d("UserStuffActivity", "Received userID: " + userID);
         Log.d("UserStuffActivity", "Received token: " + token);
 
         tvUsername.setText(username);
+
 
         inventoryAdapter = new ItemAdapter();
         rvInventory.setAdapter(inventoryAdapter);
         rvInventory.setLayoutManager(new LinearLayoutManager(this));
 
         apiService = RetrofitClient.getInstance().getApi();
-        loadData(username);
+        loadData();
 
         btnBack.setOnClickListener(v -> finish());
+
     }
 
-    private void loadData(String username) {
-        apiService.getUserObjects(username, token).enqueue(new Callback<List<InventoryObject>>() {
+    private void loadData() {
+        // 使用 userID 获取用户物品
+        apiService.getUserObjects(userID, token).enqueue(new Callback<List<InventoryObject>>() {
             @Override
             public void onResponse(Call<List<InventoryObject>> call, Response<List<InventoryObject>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    inventoryAdapter.setItems(response.body());
+                    List<InventoryObject> inventoryItems = response.body();
+                    inventoryAdapter.setItems(inventoryItems);
+                } else {
+                    Toast.makeText(UserStuffActivity.this,
+                            "Error loading inventory: " + response.code(),
+                            Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<List<InventoryObject>> call, Throwable t) {
-                Toast.makeText(UserStuffActivity.this, "Error loading inventory", Toast.LENGTH_SHORT).show();
+                Toast.makeText(UserStuffActivity.this,
+                        "Error loading inventory: " + t.getMessage(),
+                        Toast.LENGTH_SHORT).show();
             }
         });
 
-        // Load user money
-        apiService.getUserMoney(username, token).enqueue(new Callback<Double>() {
+        // 获取用户金钱（保持不变）
+        apiService.getUserMoney(userID, token).enqueue(new Callback<Double>() {
             @Override
             public void onResponse(Call<Double> call, Response<Double> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     tvMoney.setText(String.format("%.2f €", response.body()));
+                } else {
+                    Toast.makeText(UserStuffActivity.this,
+                            "Error loading money: " + response.code(),
+                            Toast.LENGTH_SHORT).show();
                 }
             }
 
-
             @Override
             public void onFailure(Call<Double> call, Throwable t) {
-                Toast.makeText(UserStuffActivity.this, "Error loading money", Toast.LENGTH_SHORT).show();
+                Toast.makeText(UserStuffActivity.this,
+                        "Error loading money: " + t.getMessage(),
+                        Toast.LENGTH_SHORT).show();
             }
         });
     }
+
 }

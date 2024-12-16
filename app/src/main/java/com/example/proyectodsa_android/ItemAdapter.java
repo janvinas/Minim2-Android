@@ -73,7 +73,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.InventoryViewH
 
             Log.d("StoreAdapter", "Final Image URL: " + imageUrl); // 添加日志以输出拼接后的 URL
 
-            // 使用 GlideApp 加载图片
+            // Carga de imágenes con GlideApp
             GlideApp.with(itemView.getContext())
                     .load(imageUrl)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)

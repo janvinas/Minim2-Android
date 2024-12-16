@@ -88,7 +88,7 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="16dp"
                 android:text="Already have an account? Login"
-                android:textColor="@color/design_default_color_primary" />
+                android:textColor="#1E88E5" />
         </LinearLayout>
 
         <!-- Login Layout -->
@@ -136,7 +136,7 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="16dp"
                 android:text="Don't have an account? Register"
-                android:textColor="@color/design_default_color_primary" />
+                android:textColor="#1E88E5" />
         </LinearLayout>
 
     </ViewFlipper>

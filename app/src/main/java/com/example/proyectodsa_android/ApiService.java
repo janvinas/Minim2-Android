@@ -22,28 +22,29 @@ public interface ApiService {
     @PUT("users/register")
     Call<User> register(@Body User user);
 
-    @GET("users/getObjects/{username}")
+
+    @GET("users/getObjects/{userID}")
     Call<List<InventoryObject>> getUserObjects(
-            @Path("username") String username,
+            @Path("userID") String userID,
             @Header("Cookie") String token
     );
 
-    @GET("shop/money/{username}")
+
+    @GET("shop/money/{userID}")
     Call<Double> getUserMoney(
-            @Path("username") String username,
+            @Path("userID") String userID,
             @Header("Cookie") String token
     );
 
     @GET("shop/listObjects")
     Call<List<StoreObject>> getStoreItems();
 
-    @POST("shop/buy/{object}/{username}/{quantity}")
+
+    @POST("shop/buy/{objectID}/{userID}/{quantity}")
     Call<Void> buyObject(
-            @Path("object") String object,
-            @Path("username") String username,
+            @Path("objectID") String objectID,
+            @Path("userID") String userID,
             @Path("quantity") int quantity,
             @Header("Cookie") String token
     );
-
-
 }

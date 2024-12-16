@@ -68,10 +68,12 @@ public class AuthActivity extends AppCompatActivity {
     }
 
     private void handleRegister() {
-        String username = etUsername.getText().toString();
-        String email = etEmail.getText().toString();
+        String username = etUsername.getText().toString().trim();
+        String email = etEmail.getText().toString().trim();
         String password = etPassword.getText().toString();
         String confirmPassword = etConfirmPassword.getText().toString();
+
+
         if (username.isEmpty() || email.isEmpty() || password.isEmpty()) {
             Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show();
             return;
@@ -81,13 +83,21 @@ public class AuthActivity extends AppCompatActivity {
             Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show();
             return;
         }
-        User user = new User(username, password, email); // 使用带参数的构造函数
+
+        User user = new User(username, password, email);
+
+
+        Log.d("AuthActivity", "Registering user: " +
+                "username=" + user.getUsername() +
+                ", email=" + user.getMail() +
+                ", password=" + user.getPassword());
 
         apiService.register(user).enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
                 if (response.isSuccessful()) {
-                    Toast.makeText(AuthActivity.this, "Registration successful", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AuthActivity.this,
+                            "Registration successful", Toast.LENGTH_SHORT).show();
                     viewFlipper.setDisplayedChild(1);
                     etLoginIdentifier.setText(username);
                     etLoginPassword.setText(password);
@@ -95,6 +105,8 @@ public class AuthActivity extends AppCompatActivity {
                     Toast.makeText(AuthActivity.this,
                             "Registration failed: " + response.code(),
                             Toast.LENGTH_SHORT).show();
+                    Log.e("AuthActivity", "Registration failed: " + response.code() +
+                            " - " + response.message());
                 }
             }
 
@@ -103,6 +115,7 @@ public class AuthActivity extends AppCompatActivity {
                 Toast.makeText(AuthActivity.this,
                         "Error: " + t.getMessage(),
                         Toast.LENGTH_SHORT).show();
+                Log.e("AuthActivity", "Registration error", t);
             }
         });
     }
@@ -142,20 +155,20 @@ public class AuthActivity extends AppCompatActivity {
     }
 
     private void handleLoginSuccess(User user, String rawToken) {
-        // 打印原始token以便调试
+
         Log.d("AuthActivity", "Raw token: " + rawToken);
 
         if (rawToken != null) {
-            // 不需要修改token格式，直接使用服务器返回的完整Cookie字符串
             SharedPreferences prefs = getSharedPreferences("auth", MODE_PRIVATE);
             prefs.edit()
                     .putString("username", user.getUsername())
                     .putString("token", rawToken)  // 保存完整的Cookie字符串
                     .apply();
 
-            // 启动主页
+
             Intent intent = new Intent(this, HomeActivity.class);
             intent.putExtra("username", user.getUsername());
+            intent.putExtra("userID", user.getId());
             intent.putExtra("token", rawToken);
             startActivity(intent);
             finish();

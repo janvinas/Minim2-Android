@@ -1,6 +1,7 @@
 package com.example.proyectodsa_android.models;
 
 public class StoreObject {
+    private String id;
     private String name;
     private double price;
     private String URL;
@@ -14,7 +15,13 @@ public class StoreObject {
         this.price = price;
         this.URL = URL;
     }
+    public String getId() {
+        return id;
+    }
 
+    public void setId(String id) {
+        this.id = id;
+    }
     public String getName() {
         return name;
     }

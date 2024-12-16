@@ -34,6 +34,9 @@ public class HomeActivity extends AppCompatActivity {
     private ImageButton btnStore;
     private Button btnLogout;
     private TextView tvUsername;
+    private String userID;
+    private String token;
+    private String username;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,48 +49,49 @@ public class HomeActivity extends AppCompatActivity {
         btnLogout = findViewById(R.id.btnLogout);
 
         String username = getIntent().getStringExtra("username");
-        tvUsername.setText(username);
+        userID = getIntent().getStringExtra("userID");
         String token = getIntent().getStringExtra("token");
+        tvUsername.setText(username);
 
         // 验证 token
-        if (token == null || token.isEmpty()) {
-            Toast.makeText(this, "Token is missing or invalid!", Toast.LENGTH_SHORT).show();
-            Log.e("HomeActivity", "Token is null or empty. Redirecting to login.");
-
-            // 如果 token 无效，则返回登录界面
-            Intent intent = new Intent(this, AuthActivity.class);
-            startActivity(intent);
-            finish();
+        if (token == null || token.isEmpty() || userID == null || userID.isEmpty()) {
+            Toast.makeText(this, "Missing authentication data!", Toast.LENGTH_SHORT).show();
+            Log.e("HomeActivity", "Token or UserID is missing. Redirecting to login.");
+            redirectToLogin();
             return;
         }
 
         Log.d("HomeActivity", "Token received: " + token);
+        Log.d("HomeActivity", "UserID received: " + userID);
 
-        // 按钮点击事件
-
+        // 设置按钮点击事件，传递所有必要的数据
         btnStore.setOnClickListener(v -> {
             Intent intent = new Intent(this, StoreActivity.class);
             intent.putExtra("username", username);
-            intent.putExtra("token", token);  // 确保 token 正确传递
+            intent.putExtra("userID", userID);
+            intent.putExtra("token", token);
             startActivity(intent);
         });
 
         btnUserStuff.setOnClickListener(v -> {
             Intent intent = new Intent(this, UserStuffActivity.class);
             intent.putExtra("username", username);
-            intent.putExtra("token", token);  // 确保 token 正确传递
+            intent.putExtra("userID", userID);
+            intent.putExtra("token", token);
             startActivity(intent);
         });
-
-
 
         btnLogout.setOnClickListener(v -> {
             SharedPreferences prefs = getSharedPreferences("auth", MODE_PRIVATE);
             prefs.edit().clear().apply();
-            Intent intent = new Intent(this, AuthActivity.class);
-            startActivity(intent);
-            finish();
+            redirectToLogin();
         });
 
+    }
+
+    private void redirectToLogin() {
+        Intent intent = new Intent(this, AuthActivity.class);
+        startActivity(intent);
+        finish();
     }
 }
