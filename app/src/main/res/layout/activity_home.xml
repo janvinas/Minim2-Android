@@ -112,12 +112,13 @@
 
             <ImageButton
 
+                android:id="@+id/btnReport"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/store_button"
                 android:scaleType="centerCrop"
-                android:src="@drawable/banania_store" />  <!-- 保证图片比例和填充 -->
+                android:src="@drawable/report" />  <!-- 保证图片比例和填充 -->
         </FrameLayout>
 
 

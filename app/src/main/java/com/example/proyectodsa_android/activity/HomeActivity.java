@@ -32,6 +32,7 @@ import retrofit2.Response;
 public class HomeActivity extends AppCompatActivity {
     private ImageButton btnUserStuff;
     private ImageButton btnStore;
+    private ImageButton btnReport;
     private Button btnLogout;
     private TextView tvUsername;
     private String userID;
@@ -47,6 +48,7 @@ public class HomeActivity extends AppCompatActivity {
         btnUserStuff = findViewById(R.id.btnUserStuff);
         btnStore = findViewById(R.id.btnstore);
         btnLogout = findViewById(R.id.btnLogout);
+        btnReport = findViewById(R.id.btnReport);
 
         String username = getIntent().getStringExtra("username");
         userID = getIntent().getStringExtra("userID");
@@ -85,6 +87,13 @@ public class HomeActivity extends AppCompatActivity {
             SharedPreferences prefs = getSharedPreferences("auth", MODE_PRIVATE);
             prefs.edit().clear().apply();
             redirectToLogin();
+        });
+
+        btnReport.setOnClickListener(v -> {
+            Intent intent = new Intent(this, ReportActivity.class);
+            intent.putExtra("userID", userID);
+            intent.putExtra("token", token);
+            startActivity(intent);
         });
 
     }

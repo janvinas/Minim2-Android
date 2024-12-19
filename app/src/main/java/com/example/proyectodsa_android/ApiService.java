@@ -1,6 +1,7 @@
 package com.example.proyectodsa_android;
 
 import com.example.proyectodsa_android.models.InventoryObject;
+import com.example.proyectodsa_android.models.IssueNotification;
 import com.example.proyectodsa_android.models.LoginRequest;
 import com.example.proyectodsa_android.models.StoreObject;
 import com.example.proyectodsa_android.models.User;
@@ -46,5 +47,11 @@ public interface ApiService {
             @Path("userID") String userID,
             @Path("quantity") int quantity,
             @Header("Cookie") String token
+    );
+
+    @POST("users/report")
+    Call<Void> reportAbuse(
+            @Header("Cookie") String token,
+            @Body IssueNotification issue
     );
 }
